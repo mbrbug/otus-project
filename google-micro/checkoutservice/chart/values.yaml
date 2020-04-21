@@ -1,0 +1,8 @@
+---
+image:
+  repository: andrewmbr/checkoutservice
+  tag: master
+
+service:
+  internalPort: 5050
+  externalPort: 5050

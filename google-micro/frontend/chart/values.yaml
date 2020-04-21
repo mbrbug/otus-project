@@ -1,0 +1,8 @@
+---
+image:
+  repository: andrewmbr/frontend
+  tag: master
+
+service:
+  internalPort: 8080
+  externalPort: 80

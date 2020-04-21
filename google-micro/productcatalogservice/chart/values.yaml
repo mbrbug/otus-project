@@ -1,0 +1,8 @@
+---
+image:
+  repository: andrewmbr/productcatalogservice
+  tag: master
+
+service:
+  internalPort: 3550
+  externalPort: 3550

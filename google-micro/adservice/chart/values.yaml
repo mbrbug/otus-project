@@ -1,0 +1,8 @@
+---
+image:
+  repository: andrewmbr/adservice
+  tag: master
+
+service:
+  internalPort: 9555
+  externalPort: 9555

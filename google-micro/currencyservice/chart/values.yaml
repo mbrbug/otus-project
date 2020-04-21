@@ -1,0 +1,8 @@
+---
+image:
+  repository: andrewmbr/currencyservice
+  tag: master
+
+service:
+  internalPort: 7000
+  externalPort: 7000

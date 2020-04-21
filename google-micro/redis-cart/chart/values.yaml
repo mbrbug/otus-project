@@ -1,0 +1,8 @@
+---
+image:
+  repository: redis:alpine
+  tag: latest
+
+service:
+  internalPort: 6379
+  externalPort: 6379

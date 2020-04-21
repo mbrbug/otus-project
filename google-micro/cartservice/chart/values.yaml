@@ -1,0 +1,8 @@
+---
+image:
+  repository: andrewmbr/cartservice
+  tag: master
+
+service:
+  internalPort: 7070
+  externalPort: 7070

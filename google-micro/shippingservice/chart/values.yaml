@@ -1,0 +1,8 @@
+---
+image:
+  repository: andrewmbr/shippingservice
+  tag: master
+
+service:
+  internalPort: 50051
+  externalPort: 50051
