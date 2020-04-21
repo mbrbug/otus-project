@@ -1,10 +1,10 @@
-# Otus project
+# Otus DevOps project
 
 На данный момент все установлено в базовом варианте, для проверки общей работоспособности, взаимодействия сервисов и т.д.
 
-За основу взят Hipster Shop: Cloud-Native Microservices Demo Application от Google
-Установлены gitlab, prometheus, grafana, elastiksearch, fluent-bit, kibana
-настроены pipeline для создания новых образов микросервисов, их проверки в namespace review
+За основу взят Hipster Shop: Cloud-Native Microservices Demo Application от Google  
+Установлены gitlab, prometheus, grafana, elastiksearch, fluent-bit, kibana  
+настроены pipeline для создания новых образов микросервисов, их проверки в namespace review  
 а также выкатки приложения в namespace staging и production
 
 видео
@@ -13,20 +13,20 @@
 Репозиторий проекта
 https://github.com/mbrbug/otus-project
 
-Список публичных repo в gitlab
-https://gitlab.homembr.ru/andrewmbr/shop-deploy
-https://gitlab.homembr.ru/andrewmbr/shippingservice
-https://gitlab.homembr.ru/andrewmbr/redis-cart
-https://gitlab.homembr.ru/andrewmbr/recommendationservice
-https://gitlab.homembr.ru/andrewmbr/productcatalogservice
-https://gitlab.homembr.ru/andrewmbr/paymentservice
-https://gitlab.homembr.ru/andrewmbr/loadgenerator
-https://gitlab.homembr.ru/andrewmbr/frontend
-https://gitlab.homembr.ru/andrewmbr/emailservice
-https://gitlab.homembr.ru/andrewmbr/currencyservice
-https://gitlab.homembr.ru/andrewmbr/checkoutservice
-https://gitlab.homembr.ru/andrewmbr/cartservice
-https://gitlab.homembr.ru/andrewmbr/adservice
+Список публичных repo в gitlab  
+<https://gitlab.homembr.ru/andrewmbr/shop-deploy>
+<https://gitlab.homembr.ru/andrewmbr/shippingservice>
+<https://gitlab.homembr.ru/andrewmbr/redis-cart>
+<https://gitlab.homembr.ru/andrewmbr/recommendationservice>
+<https://gitlab.homembr.ru/andrewmbr/productcatalogservice>
+<https://gitlab.homembr.ru/andrewmbr/paymentservice>
+<https://gitlab.homembr.ru/andrewmbr/loadgenerator>
+<https://gitlab.homembr.ru/andrewmbr/frontend>
+<https://gitlab.homembr.ru/andrewmbr/emailservice>
+<https://gitlab.homembr.ru/andrewmbr/currencyservice>
+<https://gitlab.homembr.ru/andrewmbr/checkoutservice>
+<https://gitlab.homembr.ru/andrewmbr/cartservice>
+<https://gitlab.homembr.ru/andrewmbr/adservice>
 
 
 1 Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
