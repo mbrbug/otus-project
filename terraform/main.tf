@@ -14,7 +14,7 @@ resource "google_container_cluster" "primary" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
-  initial_node_count       = 2
+  initial_node_count       = 1
   enable_legacy_abac = true
  
   ip_allocation_policy {}
@@ -32,16 +32,16 @@ resource "google_container_cluster" "primary" {
   }
 }
 
-resource "google_container_node_pool" "primary_preemptible_nodes" {
+resource "google_container_node_pool" "primary_nodes" {
   name       = "my-node-pool"
   location   = "us-central1-c"
   project = "docker-270618"
   cluster    = google_container_cluster.primary.name
-  node_count = 2
+  node_count = 3
 
   node_config {
-    preemptible  = true
-    machine_type = "n1-standard-4"
+    preemptible  = false
+    machine_type = "n1-standard-2"
     disk_size_gb = 50
  
 
@@ -55,8 +55,3 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     ]
   }
 }
-
-#resource "helm_release" "nginx-ingress" {
-#  name  = "nginx-ingress"
-#  chart = "stable/nginx-ingress"
-#}
