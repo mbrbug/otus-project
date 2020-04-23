@@ -65,6 +65,8 @@ helm fetch gitlab/gitlab
 - CI_REGISTRY_PASSWORD (пароль от dockerhub)
 - GKE_SERVICE_ACCOUNT (base64 encoded file google service account json для подключения к кластеру)
 
+при деплое приложения используется helm3 и образ devth/helm c установленным helm3
+
 4 nginx-ingress  
 Установка nginx-ingress без изменений в конфиг из репозитория  
 `helm install nginx stable/nginx-ingress`  
