@@ -28,8 +28,12 @@ https://github.com/mbrbug/otus-project
 <https://gitlab.homembr.ru/andrewmbr/cartservice>  
 <https://gitlab.homembr.ru/andrewmbr/adservice>  
 
-
 1 Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
+
+2 git pre-hooks
+
+3 slack integration (gitlab & prometheus (not yet))
+<https://devops-team-otus.slack.com/services/B0126HVC6SJ?added=1>
 
 2 Terraform  
 инициализируем конфиг terraform  
@@ -82,7 +86,11 @@ helm fetch gitlab/gitlab
 helm upgrade --install grafana stable/grafana --set "adminPassword=admin" \
 --set "service.type=NodePort" \
 --set "ingress.enabled=true" \
---set "ingress.hosts={grafana.homembr.ru}"
+--set "ingress.hosts={grafana.homembr.ru}" \
+--set persistence.enabled=true \
+--set persistence.accessModes={ReadWriteOnce} \
+--set persistence.size=8Gi -n grafana \
+--namespace monitoring
 ```  
 
 7 EFK Stack  
