@@ -1114,15 +1114,13 @@ pushgateway:
 ##
 alertmanagerFiles:
   alertmanager.yml:
-    #global: {}
-    global:
-      slack_api_url: 'https://hooks.slack.com/services/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'
+    global: {}
       # slack_api_url: ''
 
     receivers:
       - name: default-receiver
-        slack_configs:
-        - channel: '#andrei_maiboroda'
+        # slack_configs:
+        #  - channel: '@you'
         #    send_resolved: true
 
     route:
@@ -1135,38 +1133,20 @@ alertmanagerFiles:
 ##
 serverFiles:
 
-   ## Alerts configuration
+  ## Alerts configuration
   ## Ref: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
-  alerting_rules.yml:
-    groups:
-      - name: Instances
-        rules:
-          - alert: InstanceDown
-            expr: up == 0
-            for: 5m
-            labels:
-              severity: page
-            annotations:
-              description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
-              summary: 'Instance {{ $labels.instance }} down'
-    groups:
-      - name: etcd
-        rules:
-          - alert: etcdInsufficientMembers
-            annotations:
-              message: 'etcd cluster "{{`{{`}} $labels.job {{`}}`}}": insufficient members ({{`{{`}} $value {{`}}`}}).'
-            expr: sum(up{job=~".*etcd.*"} == bool 1) by (job) < ((count(up{job=~".*etcd.*"}) by (job) + 1) / 2)
-            for: 3m
-            labels:
-              severity: critical
-          - alert: etcdNoLeader
-            annotations:
-              message: 'etcd cluster "{{`{{`}} $labels.job {{`}}`}}": member {{`{{`}} $labels.instance {{`}}`}} has no leader.'
-            expr: etcd_server_has_leader{job=~".*etcd.*"} == 0
-            for: 1m
-            labels:
-              severity: critical
-              
+  alerting_rules.yml: {}
+  # groups:
+  #   - name: Instances
+  #     rules:
+  #       - alert: InstanceDown
+  #         expr: up == 0
+  #         for: 5m
+  #         labels:
+  #           severity: page
+  #         annotations:
+  #           description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
+  #           summary: 'Instance {{ $labels.instance }} down'
   ## DEPRECATED DEFAULT VALUE, unless explicitly naming your files, please use alerting_rules.yml
   alerts: {}
 
@@ -1185,6 +1165,37 @@ serverFiles:
       - /etc/config/alerts
 
     scrape_configs:
+
+      - job_name: 'ingress-nginx-endpoints'
+        kubernetes_sd_configs:
+          - role: pod
+        namespaces:
+        names:
+          - ingress-nginx
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+
+
+      - job_name: 'cadvisor'
+        static_configs:
+          - targets:
+            - 'cadvisor:8080'
+
+      - job_name: 'just-all-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+
+      - job_name: 'just-production-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace]
+            action: keep
+            regex: production
+
+
       - job_name: prometheus
         static_configs:
           - targets:
@@ -1204,57 +1215,6 @@ serverFiles:
       # the endpoints associated with the default/kubernetes service using the
       # default named port `https`. This works for single API server deployments as
       # well as HA API server deployments.
-
-      - job_name: 'just-all-endpoints'
-        kubernetes_sd_configs:
-          - role: endpoints
-
-      - job_name: 'just-all-pods'
-        kubernetes_sd_configs:
-          - role: pod
-
-      - job_name: 'review-endpoints'
-        kubernetes_sd_configs:
-          - role: endpoints
-            # namespaces:
-            #   names:
-            #   - review
-        relabel_configs:
-         - source_labels: [__meta_kubernetes_namespace]
-           action: keep
-           regex: review
-
-      - job_name: 'production-endpoints'
-        kubernetes_sd_configs:
-          - role: endpoints
-            # namespaces:
-            #   names:
-            #   - review
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_namespace] # Добавсляем сущности только из метки __meta_kubernetes_namespace со значением production
-            action: keep
-            regex: production
-          - action: labelmap # Добавить название сервиса к меткам
-            regex: __meta_kubernetes_pod_label_(.+)
-          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
-            target_label: kubernetes_namespace
-
-      - job_name: 'stackdriver-exporter'
-        static_configs:
-          - targets:
-            - 'stackdriver-exporter:9255'
-
-      - job_name: 'ingress-nginx-endpoints18'
-        kubernetes_sd_configs:
-          - role: endpoints
-        relabel_configs:
-         - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
-           action: keep
-           regex: ingress-nginx
-         - source_labels: [__meta_kubernetes_pod_container_port_number]
-           action: keep
-           regex: 10254
-
       - job_name: 'kubernetes-apiservers'
 
         kubernetes_sd_configs:
@@ -1285,10 +1245,8 @@ serverFiles:
         # will add targets for each API server which Kubernetes adds an endpoint to
         # the default/kubernetes service.
         relabel_configs:
-#          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
           - source_labels: [__meta_kubernetes_namespace]
             action: keep
-#            regex: default;kubernetes;https
             regex: default
 
       - job_name: 'kubernetes-nodes'
@@ -1316,17 +1274,6 @@ serverFiles:
 
         kubernetes_sd_configs:
           - role: node
-
-        relabel_configs:
-          - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+)
-          - target_label: __address__
-            replacement: kubernetes.default.svc:443
-          - source_labels: [__meta_kubernetes_node_name]
-            regex: (.+)
-            target_label: __metrics_path__
-            replacement: /api/v1/nodes/$1/proxy/metrics
-
 
       - job_name: 'kubernetes-nodes-cadvisor'
 
@@ -1483,28 +1430,10 @@ serverFiles:
       - job_name: 'kubernetes-services'
 
         metrics_path: /probe
-        params:
-          module: [http_2xx]
+
 
         kubernetes_sd_configs:
           - role: service
-
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
-            action: keep
-            regex: true
-          - source_labels: [__address__]
-            target_label: __param_target
-          - target_label: __address__
-            replacement: blackbox
-          - source_labels: [__param_target]
-            target_label: instance
-          - action: labelmap
-            regex: __meta_kubernetes_service_label_(.+)
-          - source_labels: [__meta_kubernetes_namespace]
-            target_label: kubernetes_namespace
-          - source_labels: [__meta_kubernetes_service_name]
-            target_label: kubernetes_name
 
       # Example scrape config for pods
       #
@@ -1520,26 +1449,9 @@ serverFiles:
           - role: pod
 
         relabel_configs:
-          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+          - source_labels: [__metrics_path__]
             action: keep
-            regex: true
-          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-            action: replace
-            target_label: __metrics_path__
-            regex: (.+)
-          - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-            action: replace
-            regex: ([^:]+)(?::\d+)?;(\d+)
-            replacement: $1:$2
-            target_label: __address__
-          - action: labelmap
-            regex: __meta_kubernetes_pod_label_(.+)
-          - source_labels: [__meta_kubernetes_namespace]
-            action: replace
-            target_label: kubernetes_namespace
-          - source_labels: [__meta_kubernetes_pod_name]
-            action: replace
-            target_label: kubernetes_pod_name
+            regex: /metrics
 
       # Example Scrape config for pods which should be scraped slower. An useful example
       # would be stackriver-exporter which querys an API on every scrape of the pod
