@@ -1116,7 +1116,7 @@ alertmanagerFiles:
   alertmanager.yml:
     #global: {}
     global:
-      slack_api_url: 'https://hooks.slack.com/services/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'
+      slack_api_url: 'https://hooks.slack.com/services/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'
       # slack_api_url: ''
 
     receivers:
@@ -1166,7 +1166,7 @@ serverFiles:
             for: 1m
             labels:
               severity: critical
-              
+
   ## DEPRECATED DEFAULT VALUE, unless explicitly naming your files, please use alerting_rules.yml
   alerts: {}
 
