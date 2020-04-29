@@ -300,9 +300,6 @@ plugins: []
 ##
 datasources: 
  datasources.yaml:
-   deleteDatasources:
-     - name: Prometheus2
-       orgId: 1
    apiVersion: 1
    datasources:
    - name: Prometheus
@@ -364,7 +361,7 @@ dashboards:
       file: dashboards/kubernetes-deployment-metrics.json
     kuber-cluster:
       file: dashboards/kubernetes-cluster.json
-    kuber-cluster:
+    kuber-cluster-mon:
       file: dashboards/kuber-cluster-mon.json
     frontend-ui:
       file: dashboards/frontend-ui.json
