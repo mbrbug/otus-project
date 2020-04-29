@@ -128,14 +128,14 @@ extraExposePorts: []
  #   type: ClusterIP
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   labels: {}
   path: /
   hosts:
-    - chart-example.local
+    - grafana.homembr.ru
   ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
   extraPaths: []
   # - path: /*
@@ -194,11 +194,11 @@ extraContainers: |
 ##
 persistence:
   type: pvc
-  enabled: false
+  enabled: true
   # storageClassName: default
   accessModes:
     - ReadWriteOnce
-  size: 10Gi
+  size: 8Gi
   # annotations: {}
   finalizers:
     - kubernetes.io/pvc-protection
@@ -298,15 +298,18 @@ plugins: []
 ## Configure grafana datasources
 ## ref: http://docs.grafana.org/administration/provisioning/#datasources
 ##
-datasources: {}
-#  datasources.yaml:
-#    apiVersion: 1
-#    datasources:
-#    - name: Prometheus
-#      type: prometheus
-#      url: http://prometheus-prometheus-server
-#      access: proxy
-#      isDefault: true
+datasources: 
+ datasources.yaml:
+   deleteDatasources:
+     - name: Prometheus2
+       orgId: 1
+   apiVersion: 1
+   datasources:
+   - name: Prometheus
+     type: prometheus
+     url: http://prometheus-server
+     access: proxy
+     isDefault: true
 
 ## Configure notifiers
 ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
@@ -331,18 +334,18 @@ notifiers: {}
 ##
 ## `path` must be /var/lib/grafana/dashboards/<provider_name>
 ##
-dashboardProviders: {}
-#  dashboardproviders.yaml:
-#    apiVersion: 1
-#    providers:
-#    - name: 'default'
-#      orgId: 1
-#      folder: ''
-#      type: file
-#      disableDeletion: false
-#      editable: true
-#      options:
-#        path: /var/lib/grafana/dashboards/default
+dashboardProviders:
+ dashboardproviders.yaml:
+   apiVersion: 1
+   providers:
+   - name: 'default'
+     orgId: 1
+     folder: ''
+     type: file
+     disableDeletion: false
+     editable: true
+     options:
+       path: /var/lib/grafana/dashboards/default
 
 ## Configure grafana dashboard to import
 ## NOTE: To use dashboards you must also enable/configure dashboardProviders
@@ -350,13 +353,22 @@ dashboardProviders: {}
 ##
 ## dashboards per provider, use provider name as key.
 ##
-dashboards: {}
-  # default:
-  #   some-dashboard:
-  #     json: |
-  #       $RAW_JSON
-  #   custom-dashboard:
-  #     file: dashboards/custom-dashboard.json
+dashboards:
+  default:
+#   #   some-dashboard:
+#   #     json: |
+#   #       $RAW_JSON
+    nginx-ingress:
+      file: dashboards/nginx-ingress.json
+    kuber-deployment-metrics:
+      file: dashboards/kubernetes-deployment-metrics.json
+    kuber-cluster:
+      file: dashboards/kubernetes-cluster.json
+    kuber-cluster:
+      file: dashboards/kuber-cluster-mon.json
+    frontend-ui:
+      file: dashboards/frontend-ui.json
+  
   #   prometheus-stats:
   #     gnetId: 2
   #     revision: 2
