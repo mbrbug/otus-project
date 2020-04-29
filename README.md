@@ -147,6 +147,13 @@ helm upgrade --install grafana stable/grafana --set "adminPassword=admin46" \
 Добавлен prometheus как datasource
 Добавлен stackdriver как datasource
 
+Создан dashboard для мониторинга метрик сервиса frontend
+latency(95 percentile): histogram_quantile(0.95, sum(rate(opencensus_io_http_server_latency_bucket{kubernetes_namespace=~"$namespace"}[5m])) by (le))
+request count by method: rate(opencensus_io_http_server_request_count_by_method{app="frontend",kubernetes_namespace=~"$namespace"}[5m])
+response count by status 404 or 500: rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",kubernetes_namespace=~"$namespace",http_status=~"^[45].*"}[5m])
+response count by status 200 or 302: rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",kubernetes_namespace=~"$namespace",http_status=~"200|302"}[5m])
+etc...
+
 7 EFK Stack  
 используется chart <https://github.com/komljen/helm-charts/tree/master/efk>  
 `helm repo add akomljen-charts https://raw.githubusercontent.com/komljen/helm-charts/master/charts/`  
