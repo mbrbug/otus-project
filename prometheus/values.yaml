@@ -1116,7 +1116,7 @@ alertmanagerFiles:
   alertmanager.yml:
     #global: {}
     global:
-      slack_api_url: 'https://hooks.slack.com/services/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'
+      slack_api_url: 'xxx_https://hooks.slack.com/services/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'
       # slack_api_url: ''
 
     receivers:
@@ -1149,23 +1149,6 @@ serverFiles:
             annotations:
               description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
               summary: 'Instance {{ $labels.instance }} down'
-    groups:
-      - name: etcd
-        rules:
-          - alert: etcdInsufficientMembers
-            annotations:
-              message: 'etcd cluster "{{`{{`}} $labels.job {{`}}`}}": insufficient members ({{`{{`}} $value {{`}}`}}).'
-            expr: sum(up{job=~".*etcd.*"} == bool 1) by (job) < ((count(up{job=~".*etcd.*"}) by (job) + 1) / 2)
-            for: 3m
-            labels:
-              severity: critical
-          - alert: etcdNoLeader
-            annotations:
-              message: 'etcd cluster "{{`{{`}} $labels.job {{`}}`}}": member {{`{{`}} $labels.instance {{`}}`}} has no leader.'
-            expr: etcd_server_has_leader{job=~".*etcd.*"} == 0
-            for: 1m
-            labels:
-              severity: critical
 
   ## DEPRECATED DEFAULT VALUE, unless explicitly naming your files, please use alerting_rules.yml
   alerts: {}
@@ -1189,6 +1172,9 @@ serverFiles:
         static_configs:
           - targets:
             - localhost:9090
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
+            target_label: kubernetes_namespace
 
       # A scrape configuration for running Prometheus on a Kubernetes cluster.
       # This uses separate scrape configs for cluster components (i.e. API server, node)
@@ -1208,10 +1194,16 @@ serverFiles:
       - job_name: 'just-all-endpoints'
         kubernetes_sd_configs:
           - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
+            target_label: kubernetes_namespace
 
       - job_name: 'just-all-pods'
         kubernetes_sd_configs:
           - role: pod
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
+            target_label: kubernetes_namespace
 
       - job_name: 'review-endpoints'
         kubernetes_sd_configs:
@@ -1220,9 +1212,28 @@ serverFiles:
             #   names:
             #   - review
         relabel_configs:
-         - source_labels: [__meta_kubernetes_namespace]
-           action: keep
-           regex: review
+          - source_labels: [__meta_kubernetes_namespace]
+            action: keep
+            regex: review
+          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
+            target_label: kubernetes_namespace
+          - action: labelmap # Добавить название сервиса к меткам
+            regex: __meta_kubernetes_pod_label_(.+)
+
+      - job_name: 'staging-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+            # namespaces:
+            #   names:
+            #   - review
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace]
+            action: keep
+            regex: review
+          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
+            target_label: kubernetes_namespace
+          - action: labelmap # Добавить название сервиса к меткам
+            regex: __meta_kubernetes_pod_label_(.+)
 
       - job_name: 'production-endpoints'
         kubernetes_sd_configs:
@@ -1231,7 +1242,7 @@ serverFiles:
             #   names:
             #   - review
         relabel_configs:
-          - source_labels: [__meta_kubernetes_namespace] # Добавсляем сущности только из метки __meta_kubernetes_namespace со значением production
+          - source_labels: [__meta_kubernetes_namespace] # Добавляем сущности только из метки __meta_kubernetes_namespace со значением production
             action: keep
             regex: production
           - action: labelmap # Добавить название сервиса к меткам
@@ -1243,8 +1254,11 @@ serverFiles:
         static_configs:
           - targets:
             - 'stackdriver-exporter:9255'
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
+            target_label: kubernetes_namespace
 
-      - job_name: 'ingress-nginx-endpoints18'
+      - job_name: 'ingress-nginx-endpoints20'
         kubernetes_sd_configs:
           - role: endpoints
         relabel_configs:
@@ -1254,6 +1268,8 @@ serverFiles:
          - source_labels: [__meta_kubernetes_pod_container_port_number]
            action: keep
            regex: 10254
+         - action: labelmap # Добавить название сервиса к меткам
+           regex: __meta_kubernetes_service_label_app_(.+)           
 
       - job_name: 'kubernetes-apiservers'
 
