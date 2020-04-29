@@ -11,22 +11,22 @@
 <https://youtu.be/EzFXsRzpmH0>
 
 Репозиторий проекта
-https://github.com/mbrbug/otus-project
+<https://github.com/mbrbug/otus-project>
 
-Список публичных repo в gitlab  
-<https://gitlab.homembr.ru/andrewmbr/shop-deploy>  
-<https://gitlab.homembr.ru/andrewmbr/shippingservice>  
-<https://gitlab.homembr.ru/andrewmbr/redis-cart>  
-<https://gitlab.homembr.ru/andrewmbr/recommendationservice>  
-<https://gitlab.homembr.ru/andrewmbr/productcatalogservice>  
-<https://gitlab.homembr.ru/andrewmbr/paymentservice>  
-<https://gitlab.homembr.ru/andrewmbr/loadgenerator>  
-<https://gitlab.homembr.ru/andrewmbr/frontend>  
-<https://gitlab.homembr.ru/andrewmbr/emailservice>  
-<https://gitlab.homembr.ru/andrewmbr/currencyservice>  
-<https://gitlab.homembr.ru/andrewmbr/checkoutservice>  
-<https://gitlab.homembr.ru/andrewmbr/cartservice>  
-<https://gitlab.homembr.ru/andrewmbr/adservice>  
+Список публичных repo в gitlab ()  
+<https://gitlab.com/andrewmbr/shop-deploy>  
+<https://gitlab.com/andrewmbr/shippingservice>  
+<https://gitlab.com/andrewmbr/redis-cart>  
+<https://gitlab.com/andrewmbr/recommendationservice>  
+<https://gitlab.com/andrewmbr/productcatalogservice>  
+<https://gitlab.com/andrewmbr/paymentservice>  
+<https://gitlab.com/andrewmbr/loadgenerator>  
+<https://gitlab.com/andrewmbr/frontend>  
+<https://gitlab.com/andrewmbr/emailservice>  
+<https://gitlab.com/andrewmbr/currencyservice>  
+<https://gitlab.com/andrewmbr/checkoutservice>  
+<https://gitlab.com/andrewmbr/cartservice>  
+<https://gitlab.com/andrewmbr/adservice>  
 
 1 Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
 
@@ -34,6 +34,11 @@ https://github.com/mbrbug/otus-project
 
 3 slack integration (gitlab & prometheus (not yet))
 <https://devops-team-otus.slack.com/services/B0126HVC6SJ?added=1>
+в slack
+`/github subscribe mbrbug/otus-project`
+
+в gitlab
+settings -> integrations -> slack
 
 2 Terraform  
 инициализируем конфиг terraform  
@@ -42,7 +47,10 @@ https://github.com/mbrbug/otus-project
 Поднимаем кластер в Google Cloud  
 `terraform apply`  
 
-3 Gitlab_CI  
+3 Gitlab_CI
+
+upd: Gitlab перемещен на Gitlab.com из-за прожорливости и возможного израсходования средств на GCP
+
 скачиваем gitlab chart
 helm fetch gitlab/gitlab
 в values.yml
@@ -69,21 +77,64 @@ helm fetch gitlab/gitlab
 - CI_REGISTRY_PASSWORD (пароль от dockerhub)
 - GKE_SERVICE_ACCOUNT (base64 encoded file google service account json для подключения к кластеру)
 
+Добавлен kubernetes cluster в настройках группы
+
 при деплое приложения используется helm3 и образ devth/helm c установленным helm3
 
 4 nginx-ingress  
 Установка nginx-ingress без изменений в конфиг из репозитория  
 `helm install nginx stable/nginx-ingress`  
 
-5 Prometheus  
-проверяем, что в values.yaml включен alertmanager и node-exporter  
-`helm install prom -f values.yaml ./`  
+5 Prometheus  namespace: monitoring
 
-6 Grafana  
-Установка grafana из репозитория
+проверяем, что в values.yaml включен alertmanager и node-exporter  
+`helm install prom --namespace monitoring -f values.yaml ./`  
+
+Slack integration:
+Добавляем блок 'alertmanagerFiles:', предварительно создав webhook в slack
 
 ```
-helm upgrade --install grafana stable/grafana --set "adminPassword=admin" \
+alertmanagerFiles:
+  alertmanager.yml:
+    #global: {}
+    global:
+      slack_api_url: 'xxx_https://hooks.slack.com/services/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'
+      # slack_api_url: ''
+
+    receivers:
+      - name: default-receiver
+        slack_configs:
+        - channel: '#andrei_maiboroda'
+        #    send_resolved: true
+
+    route:
+      group_wait: 10s
+      group_interval: 5m
+      receiver: default-receiver
+      repeat_interval: 3h
+```
+
+Добавляем в блок 'serverFiles:'  
+
+```
+   groups:
+      - name: Instances
+        rules:
+          - alert: InstanceDown
+            expr: up == 0
+            for: 5m
+            labels:
+              severity: page
+            annotations:
+              description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
+              summary: 'Instance {{ $labels.instance }} down'
+```
+
+6 Grafana  
+Установка grafana из репозитория. namespace: monitoring
+
+```
+helm upgrade --install grafana stable/grafana --set "adminPassword=admin46" \
 --set "service.type=NodePort" \
 --set "ingress.enabled=true" \
 --set "ingress.hosts={grafana.homembr.ru}" \
@@ -92,6 +143,9 @@ helm upgrade --install grafana stable/grafana --set "adminPassword=admin" \
 --set persistence.size=8Gi -n grafana \
 --namespace monitoring
 ```  
+
+Добавлен prometheus как datasource
+Добавлен stackdriver как datasource
 
 7 EFK Stack  
 используется chart <https://github.com/komljen/helm-charts/tree/master/efk>  

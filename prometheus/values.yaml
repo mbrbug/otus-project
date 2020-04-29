@@ -1229,7 +1229,7 @@ serverFiles:
         relabel_configs:
           - source_labels: [__meta_kubernetes_namespace]
             action: keep
-            regex: review
+            regex: staging
           - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
             target_label: kubernetes_namespace
           - action: labelmap # Добавить название сервиса к меткам
