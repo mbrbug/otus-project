@@ -596,7 +596,7 @@ server:
   global:
     ## How frequently to scrape targets by default
     ##
-    scrape_interval: 1m
+    scrape_interval: 30s
     ## How long until a scrape request times out
     ##
     scrape_timeout: 10s
@@ -1116,7 +1116,7 @@ alertmanagerFiles:
   alertmanager.yml:
     #global: {}
     global:
-      slack_api_url: 'xxx_https://hooks.slack.com/services/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'
+      slack_api_url: 'https://hooks.slack.com/services/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'
       # slack_api_url: ''
 
     receivers:
@@ -1141,14 +1141,14 @@ serverFiles:
     groups:
       - name: Instances
         rules:
-          - alert: InstanceDown
-            expr: up == 0
-            for: 5m
-            labels:
-              severity: page
-            annotations:
-              description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.'
-              summary: 'Instance {{ $labels.instance }} down'
+        - alert: Prodution frontend
+          expr: up{app="frontend",kubernetes_namespace="production",instance=~".*:9090"} == 0
+          for: 1m
+          labels:
+            severity: page
+          annotations:
+            description: '{{ $labels.instance }} has been down for more than 5 minutes.'
+            summary: 'Instance {{ $labels.instance }} down'
 
   ## DEPRECATED DEFAULT VALUE, unless explicitly naming your files, please use alerting_rules.yml
   alerts: {}
@@ -1191,19 +1191,23 @@ serverFiles:
       # default named port `https`. This works for single API server deployments as
       # well as HA API server deployments.
 
-      - job_name: 'just-all-endpoints'
+      - job_name: 'endpoints-all'
         kubernetes_sd_configs:
           - role: endpoints
         relabel_configs:
           - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
             target_label: kubernetes_namespace
+          - action: labelmap # Добавить название сервиса к меткам
+            regex: __meta_kubernetes_pod_label_(.+)
 
-      - job_name: 'just-all-pods'
+      - job_name: 'pods-all'
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
           - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
             target_label: kubernetes_namespace
+          - action: labelmap # Добавить название сервиса к меткам
+            regex: __meta_kubernetes_pod_label_(.+)
 
       - job_name: 'review-endpoints'
         kubernetes_sd_configs:
@@ -1258,7 +1262,7 @@ serverFiles:
           - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
             target_label: kubernetes_namespace
 
-      - job_name: 'ingress-nginx-endpoints20'
+      - job_name: 'ingress-nginx-endpoints21'
         kubernetes_sd_configs:
           - role: endpoints
         relabel_configs:
