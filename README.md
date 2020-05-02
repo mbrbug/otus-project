@@ -1,7 +1,5 @@
 # Otus DevOps project
 
-На данный момент все установлено в базовом варианте, для проверки общей работоспособности, взаимодействия сервисов и т.д.
-
 За основу взят Hipster Shop: Cloud-Native Microservices Demo Application от Google
 Изменен сервис frontend:
 на порту 9090 сервис отдает метрики: latency bucket, количество кодов состояния HTTP (200, 302, 404, 500), запрос по типу (GET, POST)
@@ -88,7 +86,7 @@ resource "helm_release" "nginx-ingress" {
 ...
 ```
 
-3 Gitlab_CI
+4 Gitlab_CI
 
 upd: Gitlab перемещен на Gitlab.com из-за прожорливости и возможного израсходования средств на тестовом GCP
 
@@ -122,10 +120,10 @@ helm fetch gitlab/gitlab
 
 при деплое приложения используется helm3 и образ devth/helm
 
-4 nginx-ingress  
+5 nginx-ingress  
 Установка nginx-ingress без изменений из репозитория  
 
-5 Prometheus  namespace: monitoring
+6 Prometheus  namespace: monitoring
 
 проверяем, что в values.yaml включен alertmanager и node-exporter  
 проверяем, что включен ingress
@@ -224,7 +222,7 @@ alertmanagerFiles:
             target_label: kubernetes_namespace
 ```
 
-6 Grafana  
+7 Grafana  
 namespace: monitoring
 
 в конфиге:
@@ -282,7 +280,7 @@ dashboards:
 ```
 
 
-7 EFK Stack  
+8 EFK Stack  
 используется chart <https://github.com/komljen/helm-charts/tree/master/efk>  
 `helm repo add akomljen-charts https://raw.githubusercontent.com/komljen/helm-charts/master/charts/`  
 `kubectl create namespace logging`  
