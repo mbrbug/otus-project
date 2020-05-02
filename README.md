@@ -5,7 +5,28 @@
 За основу взят Hipster Shop: Cloud-Native Microservices Demo Application от Google
 Изменен сервис frontend:
 на порту 9090 сервис отдает метрики: latency bucket, количество кодов состояния HTTP (200, 302, 404, 500), запрос по типу (GET, POST)
-Удалено создание LoadBalancer при деплое. Вместо него добавлено создание nginx ingress. С адресами production, staginп, review.
+Удалено создание LoadBalancer при деплое. Вместо него добавлено создание nginx ingress. С адресами production, staging, review.
+
+frontend/chart/templates/ingress.yaml
+```
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: {{ template "frontend.fullname" . }}
+  name: {{ template "frontend.fullname" . }}
+  annotations:
+spec:
+  rules:
+    - host: {{ .Release.Namespace }}.homembr.ru
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: frontend
+              servicePort: {{ .Values.service.externalPort }}
+
+```
 
 Установлены gitlab, prometheus, grafana, elastiksearch, fluent-bit, kibana  
 настроены pipeline для создания новых образов микросервисов, их проверки в namespace review  
