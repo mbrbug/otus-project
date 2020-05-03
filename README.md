@@ -51,11 +51,33 @@ spec:
 <https://gitlab.com/andrewmbr/cartservice>  
 <https://gitlab.com/andrewmbr/adservice>  
 
-1 Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
+1. Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
 
-2 git pre-hooks
+2. git pre-hooks
 
-3 slack integration (gitlab & prometheus (not yet))
+```
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.5.0
+  hooks:
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  - id: check-added-large-files
+#  - id: check-yaml
+
+- repo: https://github.com/jumanjihouse/pre-commit-hooks
+  rev: 2.0.0
+  hooks:
+  - id: markdownlint
+
+- repo: https://github.com/kintoandar/pre-commit
+  rev: v2.1.0
+  hooks:
+  - id: prometheus_check_rules
+  - id: prometheus_check_config
+```  
+
+3. slack integration (gitlab & prometheus)
 <https://devops-team-otus.slack.com/services/B0126HVC6SJ?added=1>
 
 в gitlab
@@ -64,14 +86,20 @@ settings -> integrations -> slack
 в slack
 `/github subscribe mbrbug/otus-project`
 
-2 Terraform  
+4. Terraform  
 инициализируем конфиг terraform  
 `terraform init`  
 создаем конфиг terraform/main.tf
 Поднимаем кластер в Google Cloud  
 `terraform apply`  
 
-3 Все сервисы мониторинга и логгинга запусткаются через terraform из локальных chart соответствующего сервиса.
+5. Все сервисы мониторинга и логгинга запусткаются через terraform из локальных chart соответствующего сервиса.
+после того как terraform создал кластер в GCP нужно установить контекст
+'gcloud container clusters get-credentials my-gke-cluster --zone us-central1-c --project docker-270618'
+и создать service account для дальнейшего использования при создании secret
+`kubectl create secret generic stackdriver-exporter-secret --from-file=credentials.json=docker-270618-owner.json -n monitoring`
+
+terraform-helm
 
 ```
 provider "helm" {
@@ -86,7 +114,7 @@ resource "helm_release" "nginx-ingress" {
 ...
 ```
 
-4 Gitlab_CI
+5. Gitlab_CI
 
 upd: Gitlab перемещен на Gitlab.com из-за прожорливости и возможного израсходования средств на тестовом GCP
 
@@ -120,10 +148,10 @@ helm fetch gitlab/gitlab
 
 при деплое приложения используется helm3 и образ devth/helm
 
-5 nginx-ingress  
+6. nginx-ingress  
 Установка nginx-ingress без изменений из репозитория  
 
-6 Prometheus  namespace: monitoring
+7. Prometheus  namespace: monitoring
 
 проверяем, что в values.yaml включен alertmanager и node-exporter  
 проверяем, что включен ingress
@@ -222,7 +250,11 @@ alertmanagerFiles:
             target_label: kubernetes_namespace
 ```
 
-7 Grafana  
+8. stackdriver-exporter
+source `helm fetch stable/stackdriver-exporter`
+
+
+9. Grafana  
 namespace: monitoring
 
 в конфиге:
@@ -279,8 +311,7 @@ dashboards:
       file: dashboards/frontend-ui.json
 ```
 
-
-8 EFK Stack  
+10. EFK Stack  
 используется chart <https://github.com/komljen/helm-charts/tree/master/efk>  
 `helm repo add akomljen-charts https://raw.githubusercontent.com/komljen/helm-charts/master/charts/`  
 `kubectl create namespace logging`  
