@@ -30,6 +30,8 @@ spec:
 настроены pipeline для создания новых образов микросервисов, их проверки в namespace review  
 а также выкатки приложения в namespace staging и production
 
+Namespace для разделения служб: logging, monitoring, nginx-ingress, production, staging, review
+
 видео
 <https://youtu.be/EzFXsRzpmH0>
 
@@ -90,10 +92,12 @@ settings -> integrations -> slack
 инициализируем конфиг terraform  
 `terraform init`  
 создаем конфиг terraform/main.tf
+в конфигурации указан service account key
+создается 1 node pool с 2 nodes
 Поднимаем кластер в Google Cloud  
 `terraform apply`  
 
-5. Все сервисы мониторинга и логгинга запусткаются через terraform из локальных chart соответствующего сервиса.
+5. Все сервисы мониторинга и логгинга запускаются через terraform из локальных chart соответствующего сервиса.
 после того как terraform создал кластер в GCP нужно установить контекст
 'gcloud container clusters get-credentials my-gke-cluster --zone us-central1-c --project docker-270618'
 и создать service account для дальнейшего использования при создании secret
@@ -262,7 +266,9 @@ namespace: monitoring
 указан host: grafana.homembr.ru
 включен persistence
 указан размер pvc
-указан adminPassword: strongpassword
+
+пароль admin выясняем из secret grafana  
+`kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
 
 Добавлен prometheus как datasource через кофигурационный файл values.yaml
 
