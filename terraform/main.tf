@@ -1,15 +1,13 @@
 provider "google" {
-  # Версия провайдера
-#  version = "2.15"
-  # ID проекта
-#  project = docker-270618
-#  region  = "us-central1"
+  project = var.project
+  region  = "us-central1"
+  credentials = file("~/gcp_keys/owner-gitlab_cinotional-portal-276509-25a6c8003fc1.json")
 }
 
 resource "google_container_cluster" "primary" {
   name     = "my-gke-cluster"
-  location = "us-central1-c"
-  project = "docker-270618"
+  location = var.location
+  project = var.project
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
@@ -34,10 +32,10 @@ resource "google_container_cluster" "primary" {
 
 resource "google_container_node_pool" "primary_nodes" {
   name       = "my-node-pool"
-  location   = "us-central1-c"
-  project = "docker-270618"
+  location   = var.location
+  project = var.project
   cluster    = google_container_cluster.primary.name
-  node_count = 3
+  node_count = 2
 
   node_config {
     preemptible  = false
