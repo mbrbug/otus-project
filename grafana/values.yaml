@@ -365,6 +365,8 @@ dashboards:
       file: dashboards/kuber-cluster-mon.json
     frontend-ui:
       file: dashboards/frontend-ui.json
+    stackdriver:
+      file: dashboards/stackdriver-example.json
   
   #   prometheus-stats:
   #     gnetId: 2

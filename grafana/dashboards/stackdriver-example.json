@@ -1,0 +1,1297 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 6,
+    "links": [],
+    "panels": [
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Stackdriver",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 18,
+          "x": 0,
+          "y": 0
+        },
+        "hiddenSeries": false,
+        "id": 10,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "aliasBy": "round trip latency",
+            "alignOptions": [
+              {
+                "label": "delta",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "delta",
+                "value": "ALIGN_DELTA",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              }
+            ],
+            "alignmentPeriod": "stackdriver-auto",
+            "crossSeriesReducer": "REDUCE_MEAN",
+            "filter": [],
+            "filters": [],
+            "groupBys": [],
+            "labels": {
+              "metric.label.grpc_client_method": [
+                "google.devtools.cloudtrace.v2.TraceService/BatchWriteSpans",
+                "google.monitoring.v3.MetricService/CreateMetricDescriptor",
+                "google.monitoring.v3.MetricService/CreateTimeSeries",
+                "hipstershop.CheckoutService/PlaceOrder",
+                "hipstershop.CurrencyService/GetSupportedCurrencies",
+                "hipstershop.RecommendationService/ListRecommendations",
+                "hipstershop.CurrencyService/Convert",
+                "hipstershop.ProductCatalogService/GetProduct",
+                "hipstershop.ShippingService/GetQuote",
+                "google.devtools.cloudprofiler.v2.ProfilerService/CreateProfile",
+                "hipstershop.AdService/GetAds",
+                "hipstershop.CartService/AddItem",
+                "hipstershop.CartService/GetCart",
+                "hipstershop.ProductCatalogService/ListProducts"
+              ],
+              "metric.label.opencensus_task": [
+                "go-1@production-frontend-6d4f884496-9hh9r"
+              ],
+              "resource.label.project_id": [
+                "notional-portal-276509"
+              ],
+              "resource.type": [
+                "global"
+              ]
+            },
+            "lastQuery": "aggregation.alignmentPeriod=+60s&aggregation.crossSeriesReducer=REDUCE_MEAN&aggregation.perSeriesAligner=ALIGN_DELTA&filter=metric.type=\"custom.googleapis.com/opencensus/grpc.io/client/roundtrip_latency\"&interval.endTime=2020-05-07T15:52:39Z&interval.startTime=2020-05-07T13:27:15Z&view=FULL",
+            "lastQueryError": "",
+            "metricKind": "CUMULATIVE",
+            "metricType": "custom.googleapis.com/opencensus/grpc.io/client/roundtrip_latency",
+            "perSeriesAligner": "ALIGN_DELTA",
+            "projectName": "notional-portal-276509",
+            "refId": "A",
+            "service": "",
+            "unit": "ms",
+            "usedAlignmentPeriod": 60,
+            "valueType": "DISTRIBUTION",
+            "variableOptionGroup": {
+              "expanded": false,
+              "label": "Template Variables",
+              "options": []
+            },
+            "variableOptions": []
+          },
+          {
+            "aliasBy": "server latency",
+            "alignOptions": [
+              {
+                "label": "delta",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "delta",
+                "value": "ALIGN_DELTA",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              }
+            ],
+            "alignmentPeriod": "stackdriver-auto",
+            "crossSeriesReducer": "REDUCE_MEAN",
+            "filter": [],
+            "filters": [],
+            "groupBys": [],
+            "labels": {
+              "metric.label.opencensus_task": [
+                "go-1@production-frontend-6d4f884496-9hh9r"
+              ],
+              "resource.label.project_id": [
+                "notional-portal-276509"
+              ],
+              "resource.type": [
+                "global"
+              ]
+            },
+            "lastQuery": "aggregation.alignmentPeriod=+60s&aggregation.crossSeriesReducer=REDUCE_MEAN&aggregation.perSeriesAligner=ALIGN_DELTA&filter=metric.type=\"custom.googleapis.com/opencensus/opencensus.io/http/server/latency\"&interval.endTime=2020-05-07T15:52:39Z&interval.startTime=2020-05-07T13:27:15Z&view=FULL",
+            "lastQueryError": "",
+            "metricKind": "CUMULATIVE",
+            "metricType": "custom.googleapis.com/opencensus/opencensus.io/http/server/latency",
+            "perSeriesAligner": "ALIGN_DELTA",
+            "projectName": "notional-portal-276509",
+            "refId": "B",
+            "service": "",
+            "unit": "ms",
+            "usedAlignmentPeriod": 60,
+            "valueType": "DISTRIBUTION",
+            "variableOptionGroup": {
+              "expanded": false,
+              "label": "Template Variables",
+              "options": []
+            },
+            "variableOptions": []
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Frontend build in stackdriver metrics example",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "ms",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Stackdriver",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 6,
+          "w": 9,
+          "x": 0,
+          "y": 7
+        },
+        "hiddenSeries": false,
+        "id": 8,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "aliasBy": "",
+            "alignOptions": [
+              {
+                "label": "delta",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "delta",
+                "value": "ALIGN_DELTA",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              },
+              {
+                "label": "rate",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "rate",
+                "value": "ALIGN_RATE",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "min",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "min",
+                "value": "ALIGN_MIN",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "max",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "max",
+                "value": "ALIGN_MAX",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "mean",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "mean",
+                "value": "ALIGN_MEAN",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "count",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "count",
+                "value": "ALIGN_COUNT",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "BOOL"
+                ]
+              },
+              {
+                "label": "sum",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "sum",
+                "value": "ALIGN_SUM",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              },
+              {
+                "label": "stddev",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "stddev",
+                "value": "ALIGN_STDDEV",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "percent change",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "percent change",
+                "value": "ALIGN_PERCENT_CHANGE",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              }
+            ],
+            "alignmentPeriod": "stackdriver-auto",
+            "crossSeriesReducer": "REDUCE_MEAN",
+            "filter": [],
+            "filters": [],
+            "groupBys": [],
+            "labels": {
+              "resource.label.project_id": [
+                "notional-portal-276509"
+              ],
+              "resource.label.unique_id": [
+                "112528297117421174439",
+                "117796362100804410953"
+              ],
+              "resource.type": [
+                "iam_service_account"
+              ]
+            },
+            "lastQuery": "",
+            "lastQueryError": "",
+            "metricKind": "DELTA",
+            "metricType": "iam.googleapis.com/service_account/authn_events_count",
+            "perSeriesAligner": "ALIGN_DELTA",
+            "projectName": "notional-portal-276509",
+            "refId": "A",
+            "service": "",
+            "unit": "1",
+            "usedAlignmentPeriod": "",
+            "valueType": "INT64",
+            "variableOptionGroup": {
+              "expanded": false,
+              "label": "Template Variables",
+              "options": []
+            },
+            "variableOptions": []
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "IAM  - auth events",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": true,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Stackdriver",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 6,
+          "w": 9,
+          "x": 9,
+          "y": 7
+        },
+        "hiddenSeries": false,
+        "id": 6,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "aliasBy": "",
+            "alignOptions": [
+              {
+                "label": "delta",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "delta",
+                "value": "ALIGN_DELTA",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              },
+              {
+                "label": "rate",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "rate",
+                "value": "ALIGN_RATE",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              }
+            ],
+            "alignmentPeriod": "stackdriver-auto",
+            "crossSeriesReducer": "REDUCE_MEAN",
+            "filter": [],
+            "filters": [
+              "metric.label.component",
+              "=",
+              "pods",
+              "AND",
+              "resource.label.cluster_name",
+              "=",
+              "my-gke-cluster",
+              "AND",
+              "resource.type",
+              "=",
+              "k8s_node",
+              "AND"
+            ],
+            "groupBys": [],
+            "labels": {
+              "metric.label.component": [
+                "pods",
+                "docker-daemon",
+                "kubelet"
+              ],
+              "resource.label.cluster_name": [
+                "my-gke-cluster"
+              ],
+              "resource.label.location": [
+                "us-central1-c"
+              ],
+              "resource.label.node_name": [
+                "gke-my-gke-cluster-default-pool-1b0174c1-mnnw",
+                "gke-my-gke-cluster-default-pool-1b0174c1-cm8l"
+              ],
+              "resource.label.project_id": [
+                "notional-portal-276509"
+              ],
+              "resource.type": [
+                "k8s_node"
+              ]
+            },
+            "lastQuery": "aggregation.alignmentPeriod=+60s&aggregation.crossSeriesReducer=REDUCE_MEAN&aggregation.perSeriesAligner=ALIGN_DELTA&filter=metric.type=\"kubernetes.io/node_daemon/cpu/core_usage_time\"+metric.label.component=\"pods\"+resource.label.cluster_name=\"my-gke-cluster\"&interval.endTime=2020-05-07T15:52:36Z&interval.startTime=2020-05-07T09:52:36Z&view=FULL",
+            "lastQueryError": "",
+            "metricKind": "CUMULATIVE",
+            "metricType": "kubernetes.io/node_daemon/cpu/core_usage_time",
+            "perSeriesAligner": "ALIGN_DELTA",
+            "projectName": "notional-portal-276509",
+            "refId": "A",
+            "service": "",
+            "unit": "s",
+            "usedAlignmentPeriod": 60,
+            "valueType": "DOUBLE",
+            "variableOptionGroup": {
+              "expanded": false,
+              "label": "Template Variables",
+              "options": []
+            },
+            "variableOptions": []
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Kubernetes - cpu usage time",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "s",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Stackdriver",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 6,
+          "w": 9,
+          "x": 0,
+          "y": 13
+        },
+        "hiddenSeries": false,
+        "id": 4,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pointradius": 2,
+        "points": true,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "aliasBy": "",
+            "alignOptions": [
+              {
+                "label": "delta",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "delta",
+                "value": "ALIGN_DELTA",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              },
+              {
+                "label": "rate",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "rate",
+                "value": "ALIGN_RATE",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "min",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "min",
+                "value": "ALIGN_MIN",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "max",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "max",
+                "value": "ALIGN_MAX",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "mean",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "mean",
+                "value": "ALIGN_MEAN",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "count",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "count",
+                "value": "ALIGN_COUNT",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "BOOL"
+                ]
+              },
+              {
+                "label": "sum",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "sum",
+                "value": "ALIGN_SUM",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              },
+              {
+                "label": "stddev",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "stddev",
+                "value": "ALIGN_STDDEV",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "percent change",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "percent change",
+                "value": "ALIGN_PERCENT_CHANGE",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              }
+            ],
+            "alignmentPeriod": "stackdriver-auto",
+            "crossSeriesReducer": "REDUCE_MEAN",
+            "filter": [],
+            "filters": [],
+            "groupBys": [],
+            "labels": {
+              "metric.label.client_continent": [
+                "America",
+                "Asia",
+                "Europe",
+                "UNKNOWN"
+              ],
+              "metric.label.client_country": [
+                "Chile",
+                "Venezuela",
+                "Ireland",
+                "Malta",
+                "Russia",
+                "UNKNOWN",
+                "United States",
+                "China",
+                "Indonesia",
+                "Vietnam",
+                "Iceland",
+                "Italy"
+              ],
+              "resource.label.backend_failover_configuration": [
+                "PRIMARY"
+              ],
+              "resource.label.backend_name": [
+                "a0d7081fc904d11ea812b42010a80007"
+              ],
+              "resource.label.backend_scope": [
+                "UNSUPPORTED_FOR_TARGET_POOL"
+              ],
+              "resource.label.backend_scope_type": [
+                "UNSUPPORTED_FOR_TARGET_POOL"
+              ],
+              "resource.label.backend_subnetwork_name": [
+                "default"
+              ],
+              "resource.label.backend_target_name": [
+                "a0d7081fc904d11ea812b42010a80007"
+              ],
+              "resource.label.backend_target_type": [
+                "TARGET_POOL"
+              ],
+              "resource.label.backend_type": [
+                "TARGET_POOL"
+              ],
+              "resource.label.endpoint_zone": [
+                "us-central1-c"
+              ],
+              "resource.label.forwarding_rule_name": [
+                "a0d7081fc904d11ea812b42010a80007"
+              ],
+              "resource.label.forwarding_rule_network_tier": [
+                "UNKNOWN"
+              ],
+              "resource.label.load_balancer_name": [
+                "a0d7081fc904d11ea812b42010a80007"
+              ],
+              "resource.label.network_name": [
+                "default"
+              ],
+              "resource.label.project_id": [
+                "notional-portal-276509"
+              ],
+              "resource.label.region": [
+                "us-central1"
+              ],
+              "resource.type": [
+                "tcp_lb_rule"
+              ]
+            },
+            "lastQuery": "aggregation.alignmentPeriod=+60s&aggregation.crossSeriesReducer=REDUCE_MEAN&aggregation.perSeriesAligner=ALIGN_DELTA&filter=metric.type=\"loadbalancing.googleapis.com/l3/external/ingress_packets_count\"&interval.endTime=2020-05-07T15:47:44Z&interval.startTime=2020-05-07T09:47:44Z&view=FULL",
+            "lastQueryError": "",
+            "metricKind": "DELTA",
+            "metricType": "loadbalancing.googleapis.com/l3/external/ingress_bytes_count",
+            "perSeriesAligner": "ALIGN_DELTA",
+            "projectName": "notional-portal-276509",
+            "refId": "A",
+            "service": "",
+            "unit": "By",
+            "usedAlignmentPeriod": 60,
+            "valueType": "INT64",
+            "variableOptionGroup": {
+              "expanded": false,
+              "label": "Template Variables",
+              "options": []
+            },
+            "variableOptions": []
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Loadbalancing - ingress bytes",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "bytes",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Stackdriver",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 6,
+          "w": 9,
+          "x": 9,
+          "y": 13
+        },
+        "hiddenSeries": false,
+        "id": 2,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "aliasBy": "",
+            "alignOptions": [
+              {
+                "label": "delta",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "delta",
+                "value": "ALIGN_DELTA",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              },
+              {
+                "label": "rate",
+                "metricKinds": [
+                  "CUMULATIVE",
+                  "DELTA"
+                ],
+                "text": "rate",
+                "value": "ALIGN_RATE",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "min",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "min",
+                "value": "ALIGN_MIN",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "max",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "max",
+                "value": "ALIGN_MAX",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "mean",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "mean",
+                "value": "ALIGN_MEAN",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "count",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "count",
+                "value": "ALIGN_COUNT",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "BOOL"
+                ]
+              },
+              {
+                "label": "sum",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "sum",
+                "value": "ALIGN_SUM",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY",
+                  "DISTRIBUTION"
+                ]
+              },
+              {
+                "label": "stddev",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "stddev",
+                "value": "ALIGN_STDDEV",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              },
+              {
+                "label": "percent change",
+                "metricKinds": [
+                  "GAUGE",
+                  "DELTA"
+                ],
+                "text": "percent change",
+                "value": "ALIGN_PERCENT_CHANGE",
+                "valueTypes": [
+                  "INT64",
+                  "DOUBLE",
+                  "MONEY"
+                ]
+              }
+            ],
+            "alignmentPeriod": "stackdriver-auto",
+            "crossSeriesReducer": "REDUCE_MEAN",
+            "filter": [],
+            "filters": [],
+            "groupBys": [],
+            "labels": {
+              "metric.label.local_network": [
+                "default"
+              ],
+              "metric.label.local_network_interface": [
+                "nic0"
+              ],
+              "metric.label.local_subnetwork": [
+                "default"
+              ],
+              "metric.label.network_topology_remote_label": [
+                "UNSUPPORTED"
+              ],
+              "metric.label.protocol": [
+                "TCP",
+                "NOT_APPLICABLE",
+                "UDP"
+              ],
+              "metric.label.remote_continent": [
+                "Europe",
+                "Asia",
+                "America",
+                "NOT_APPLICABLE"
+              ],
+              "metric.label.remote_country": [
+                "France",
+                "Pakistan",
+                "Albania",
+                "Indonesia",
+                "Ireland",
+                "Germany",
+                "Sweden",
+                "United States",
+                "Luxembourg",
+                "Netherlands",
+                "China",
+                "Iceland",
+                "Japan",
+                "NOT_APPLICABLE",
+                "Vietnam",
+                "Australia",
+                "India",
+                "Russia",
+                "Singapore"
+              ],
+              "metric.label.remote_location_type": [
+                "EXTERNAL",
+                "CLOUD"
+              ],
+              "metric.label.remote_network": [
+                "REMOTE_IS_EXTERNAL",
+                "default"
+              ],
+              "metric.label.remote_subnetwork": [
+                "REMOTE_IS_EXTERNAL",
+                "default"
+              ],
+              "metric.label.remote_vpn_tunnel": [
+                "UNSUPPORTED"
+              ],
+              "metric.label.remote_zone": [
+                "REMOTE_IS_EXTERNAL",
+                "us-central1-c"
+              ],
+              "resource.label.instance_id": [
+                "2591277827661652339",
+                "3715379075215156379",
+                "4157861307722129779",
+                "6474507388045911195",
+                "6512073942270633115"
+              ],
+              "resource.label.project_id": [
+                "notional-portal-276509"
+              ],
+              "resource.label.zone": [
+                "us-central1-c"
+              ],
+              "resource.type": [
+                "gce_instance"
+              ]
+            },
+            "lastQuery": "aggregation.alignmentPeriod=+60s&aggregation.crossSeriesReducer=REDUCE_MEAN&aggregation.perSeriesAligner=ALIGN_DELTA&filter=metric.type=\"networking.googleapis.com/vm_flow/egress_bytes_count\"&interval.endTime=2020-05-07T15:43:29Z&interval.startTime=2020-05-07T09:43:29Z&view=FULL",
+            "lastQueryError": "",
+            "metricKind": "DELTA",
+            "metricType": "networking.googleapis.com/vm_flow/ingress_bytes_count",
+            "perSeriesAligner": "ALIGN_DELTA",
+            "projectName": "notional-portal-276509",
+            "refId": "A",
+            "service": "",
+            "unit": "By",
+            "usedAlignmentPeriod": 60,
+            "valueType": "INT64",
+            "variableOptionGroup": {
+              "expanded": false,
+              "label": "Template Variables",
+              "options": []
+            },
+            "variableOptions": []
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Networking - ingress bytes",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "transparent": true,
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "bytes",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 22,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Stackdriver example",
+    "uid": "8SzNLl6Zk",
+    "variables": {
+      "list": []
+    },
+    "version": 3
+  }

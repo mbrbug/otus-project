@@ -1116,7 +1116,7 @@ alertmanagerFiles:
   alertmanager.yml:
     #global: {}
     global:
-      slack_api_url: 'https://hooks.slack.com/services/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'
+      slack_api_url: 'xxx_https://hooks.slack.com/services/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'
       # slack_api_url: ''
 
     receivers:
@@ -1254,13 +1254,13 @@ serverFiles:
           - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
             target_label: kubernetes_namespace
 
-      - job_name: 'stackdriver-exporter'
-        static_configs:
-          - targets:
-            - 'stackdriver-exporter:9255'
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
-            target_label: kubernetes_namespace
+      # - job_name: 'stackdriver-exporter'
+      #   static_configs:
+      #     - targets:
+      #       - 'stackdriver-exporter:9255'
+      #   relabel_configs:
+      #     - source_labels: [__meta_kubernetes_namespace] # Добавить namespace к меткам
+      #       target_label: kubernetes_namespace
 
       - job_name: 'ingress-nginx-endpoints21'
         kubernetes_sd_configs:
