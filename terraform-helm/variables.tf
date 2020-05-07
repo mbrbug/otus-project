@@ -1,6 +1,6 @@
 variable project {
   description = "Project ID"
-  default = "docker-270618"
+  default = "notional-portal-276509"
 }
 
 variable stackdriverserviceAccountSecret {

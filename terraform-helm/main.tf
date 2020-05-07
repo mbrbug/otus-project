@@ -1,7 +1,6 @@
 provider "helm" {
 }
 
-
 resource "kubernetes_namespace" "namespace-monitoring" {
   metadata {
     name = var.monitoring-namespace
@@ -21,14 +20,13 @@ resource "kubernetes_namespace" "namespace-nginx-ingress" {
 }
 
 resource "kubernetes_secret" "stackdriver-exporter-sa-json" {
-  
   metadata {
     name = "stackdriver-exporter-sa-json"
     namespace = var.monitoring-namespace
   }
 
   data = {
-    "credentials.json" = "${file("~/gcp_keys/docker-270618-owner.json")}"
+    "credentials.json" = "${file("~/gcp_keys/owner-gitlab_cinotional-portal-276509-25a6c8003fc1.json")}"
   }
 
   type = "Opaque"
@@ -46,6 +44,7 @@ resource "helm_release" "prometheus" {
   chart     = "../prometheus"
   namespace = var.monitoring-namespace
   # recreate_pods = true
+  timeout = 600
 }
 
 resource "helm_release" "stackdriver-exporter" {
@@ -72,9 +71,19 @@ resource "helm_release" "grafana" {
   # recreate_pods = true
 }
 
+resource "helm_release" "efk-es-operator" {
+  name       = "es-operator"
+  #repository = "https://raw.githubusercontent.com/komljen/helm-charts/master/charts/" 
+  namespace = "logging"
+  chart      = "../elasticsearch-operator"
+}
+
 resource "helm_release" "efk" {
   name      = "efk"
   chart     = "../efk"
   namespace = "logging"
   # recreate_pods = true
+  depends_on = [
+    helm_release.efk-es-operator,
+  ]
 }
