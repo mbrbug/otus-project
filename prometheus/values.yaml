@@ -1149,6 +1149,14 @@ serverFiles:
           annotations:
             description: '{{ $labels.instance }} has been down for more than 5 minutes.'
             summary: 'Instance {{ $labels.instance }} down'
+        - alert: Prodution frontend - error 500
+          expr: rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",job=~".*-endpoints",kubernetes_namespace=~"production",http_status="500"}[1m]) > 1
+          for: 1m
+          labels:
+            severity: page
+          annotations:
+            description: '{{ $labels.instance }} has many HTTP 500 errors.'
+            summary: 'Instance {{ $labels.instance }} has many HTTP 500 errors'
 
   ## DEPRECATED DEFAULT VALUE, unless explicitly naming your files, please use alerting_rules.yml
   alerts: {}
