@@ -136,7 +136,7 @@ provider "google" {
 └── terraform-helm
 ```
 
-### 5. Все сервисы мониторинга и логгинга запускаются через terraform из локальных chart соответствующего сервиса
+#### Все сервисы мониторинга и логгинга запускаются через terraform из локальных chart соответствующего сервиса
 
 В конфигурации terraform указаны: prometheus, stackdriver-exporter, grafana, efk stack
 
@@ -378,7 +378,7 @@ response count by status 200 or 302:
 `rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",kubernetes_namespace=~"$namespace",http_status=~"200|302"}[5m])`  
 etc...
 
-Добавлены dashboards в папку dashboards локального chart 
+Добавлены dashboards в папку dashboards локального chart  
 они же добалены в конфиг
 
 ```
@@ -401,7 +401,7 @@ dashboards:
 
 ### 10. EFK Stack  
 
-используется chart <https://github.com/komljen/helm-charts/tree/master/efk> 
+используется chart <https://github.com/komljen/helm-charts/tree/master/efk>  
 namespace: logging
 
 `helm repo add akomljen-charts https://raw.githubusercontent.com/komljen/helm-charts/master/charts/`  
