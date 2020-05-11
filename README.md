@@ -6,6 +6,8 @@
 Удалено создание LoadBalancer при деплое. Вместо него добавлено создание nginx ingress. С адресами production, staging, review.  
 
 frontend/chart/templates/ingress.yamlhttp://nnmclub.to/forum/login.php
+
+```
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -54,7 +56,7 @@ Namespace для разделения служб: logging, monitoring, nginx-ing
 
 ### 1. Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
 
-2. git pre-hooks
+### 2. git pre-hooks
 
 ```
 repos:
@@ -77,7 +79,8 @@ repos:
   - id: prometheus_check_config
 ```  
 
-3. slack integration (gitlab & prometheus)
+### 3. slack integration (gitlab & prometheus)
+
 <https://devops-team-otus.slack.com/services/B0126HVC6SJ?added=1>
 
 в gitlab
@@ -86,37 +89,88 @@ settings -> integrations -> slack
 в slack
 `/github subscribe mbrbug/otus-project`
 
-4. Terraform  
+### 4. Terraform  
+
 инициализируем конфиг terraform  
 `terraform init`  
 создаем конфиг terraform/main.tf
 в конфигурации указан service account key
 создается 1 node pool с 2 nodes
+
+при создании кластера используется service account json файл
+
+```
+provider "google" {
+  project = var.project
+  region  = "us-central1"
+  credentials = file("~/gcp_keys/owner-notional-portal-276509-25a6c8003fc1.json")
+}
+```
+
 Поднимаем кластер в Google Cloud  
 `terraform apply`  
 
-5. Все сервисы мониторинга и логгинга запускаются через terraform из локальных chart соответствующего сервиса.
+Структура папки проекта следующая
+
+```
+├── cadvisor
+│   └── templates
+├── grafana
+│   ├── ci
+│   ├── dashboards
+│   └── templates
+│       └── tests
+├── nginx-ingress
+│   ├── ci
+│   └── templates
+│       └── admission-webhooks
+│           └── job-patch
+├── prometheus
+│   ├── charts
+│   │   └── kube-state-metrics
+│   │       └── templates
+│   └── templates
+├── stackdriver-exporter
+│   └── templates
+├── terraform
+└── terraform-helm
+```
+
+### 5. Все сервисы мониторинга и логгинга запускаются через terraform из локальных chart соответствующего сервиса
+
+В конфигурации terraform указаны: prometheus, stackdriver-exporter, grafana, efk stack
+
 после того как terraform создал кластер в GCP нужно установить контекст
 'gcloud container clusters get-credentials my-gke-cluster --zone us-central1-c --project docker-270618'
 и создать service account для дальнейшего использования при создании secret
 `kubectl create secret generic stackdriver-exporter-secret --from-file=credentials.json=docker-270618-owner.json -n monitoring`
 
-terraform-helm
+пример конфигурации terraform-helm:
 
 ```
 provider "helm" {
 }
 
-resource "helm_release" "nginx-ingress" {
-  name      = "nginx-ingress"
-  chart     = "../nginx-ingress"
-  namespace = "nginx-ingress"
-  recreate_pods = true
+resource "helm_release" "stackdriver-exporter" {
+  name      = "stackdriver-exporter"
+  chart     = "../stackdriver-exporter"
+  namespace = var.monitoring-namespace
+  # recreate_pods = true
+
+  set {
+    name  = "stackdriver.projectId"
+    value = var.project
+      }
+
+  set {
+    name  = "stackdriver.serviceAccountSecret"
+    value = var.stackdriverserviceAccountSecret
+      }
 }
 ...
 ```
 
-5. Gitlab_CI
+### 5. Gitlab_CI
 
 upd: Gitlab перемещен на Gitlab.com из-за прожорливости и возможного израсходования средств на тестовом GCP
 
@@ -146,14 +200,33 @@ helm fetch gitlab/gitlab
 - CI_REGISTRY_PASSWORD (пароль от dockerhub)
 - GKE_SERVICE_ACCOUNT (base64 encoded file google service account json для подключения к кластеру)
 
+дальнейший деплой приложения осуществляется через команды:
+
+```
+     - mkdir -p /etc/deploy
+     - echo ${GKE_SERVICE_ACCOUNT} | base64 -d > /etc/deploy/sa.json
+     - gcloud auth activate-service-account --key-file /etc/deploy/sa.json --project=${GKE_PROJECT}
+     - gcloud container clusters get-credentials ${GKE_CLUSTER_NAME} --zone ${GKE_ZONE} --project ${GKE_PROJECT}
+     - git clone "$CI_REPOSITORY_URL"
+     - helm upgrade --install...
+
+```
+
 Добавлен kubernetes cluster в настройках группы
 
 при деплое приложения используется helm3 и образ devth/helm
 
-6. nginx-ingress  
-Установка nginx-ingress без изменений из репозитория  
+### 6. nginx-ingress  
 
-7. Prometheus  namespace: monitoring
+используемый репозиторий helm: stable/nginx-ingress
+namespace: nginx-ingress
+
+Установка nginx-ingress без изменений из репозитория
+
+### 7. Prometheus  
+
+используемый репозиторий helm: stable/prometheus
+namespace: monitoring
 
 проверяем, что в values.yaml включен alertmanager и node-exporter  
 проверяем, что включен ingress
@@ -185,7 +258,7 @@ alertmanagerFiles:
       repeat_interval: 3h
 ```
 
-Добавляем в блок 'serverFiles:' правила  для мониторинга
+Добавляем в блок 'serverFiles:' правила  для мониторинга  
 Следующим правилом мониторим доступность сервиса frontend в namespace production
 
 ```
@@ -202,10 +275,10 @@ alertmanagerFiles:
               summary: 'Instance {{ $labels.instance }} down'
 ```
 
-Добавляем в блок 'scrape_configs:' job service discovery для мониторинга сервисов приложения
-в данном примере оставляем endpoint только из namespace review
-добавляем к меткам метку kubernetes_namespace со значением namespace
-добавляем метку вида 'app=frontend'
+Добавляем в блок 'scrape_configs:' job service discovery для мониторинга сервисов приложения  
+в данном примере оставляем endpoint только из namespace review  
+добавляем к меткам метку kubernetes_namespace со значением namespace  
+добавляем метку вида 'app=frontend'  
 
 ```
       - job_name: 'review-endpoints'
@@ -221,10 +294,11 @@ alertmanagerFiles:
             regex: __meta_kubernetes_pod_label_(.+)
 ```
 
-в данном job оставляем endpoint
-с меткой __meta_kubernetes_pod_label_app_kubernetes_io_name равной ingress-nginx
-с меткой __meta_kubernetes_pod_container_port_number равной 10254
-и добавляем метки из группы __meta_kubernetes_service_label_app_
+в данном job оставляем endpoint  
+с меткой __meta_kubernetes_pod_label_app_kubernetes_io_name равной ingress-nginx  
+с меткой __meta_kubernetes_pod_container_port_number равной 10254  
+и добавляем метки из группы __meta_kubernetes_service_label_app_  
+
 ```
       - job_name: 'ingress-nginx-endpoints'
         kubernetes_sd_configs:
@@ -252,18 +326,24 @@ alertmanagerFiles:
             target_label: kubernetes_namespace
 ```
 
-8. stackdriver-exporter
-source `helm fetch stable/stackdriver-exporter`
+### 8. stackdriver-exporter
 
-
-9. Grafana  
+используемый репозиторий helm: stable/stackdriver-exporter  
 namespace: monitoring
 
-в конфиге:
-включен ingress
-указан host: grafana.homembr.ru
-включен persistence
-указан размер pvc
+переменными через файл конфигурации terraform передаются требуемые chart'ом значения:  
+gcp project и gcp service account secret, созданный ранее в этой же конфигурации terraform
+
+### 9. Grafana  
+
+используемый репозиторий helm: stable/stackdriver-exporter  
+namespace: monitoring
+
+в конфигурации:
+включен ingress  
+указан host: grafana.homembr.ru  
+включен persistence  
+указан размер pvc  
 
 пароль admin выясняем из secret grafana  
 `kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo`
@@ -315,8 +395,11 @@ dashboards:
       file: dashboards/frontend-ui.json
 ```
 
-10. EFK Stack  
-используется chart <https://github.com/komljen/helm-charts/tree/master/efk>  
+### 10. EFK Stack  
+
+используется chart <https://github.com/komljen/helm-charts/tree/master/efk> 
+namespace: logging
+
 `helm repo add akomljen-charts https://raw.githubusercontent.com/komljen/helm-charts/master/charts/`  
 `kubectl create namespace logging`  
 `helm install es-operator --namespace logging akomljen-charts/elasticsearch-operator`  
