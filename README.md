@@ -140,9 +140,9 @@ provider "google" {
 
 В конфигурации terraform указаны: prometheus, stackdriver-exporter, grafana, efk stack
 
-после того как terraform создал кластер в GCP нужно установить контекст
-'gcloud container clusters get-credentials my-gke-cluster --zone us-central1-c --project docker-270618'
-и создать service account для дальнейшего использования при создании secret
+после того как terraform создал кластер в GCP нужно установить контекст  
+'gcloud container clusters get-credentials my-gke-cluster --zone us-central1-c --project docker-270618'  
+и создать service account для дальнейшего использования при создании secret  
 `kubectl create secret generic stackdriver-exporter-secret --from-file=credentials.json=docker-270618-owner.json -n monitoring`
 
 пример конфигурации terraform-helm:
