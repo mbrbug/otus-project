@@ -1,12 +1,11 @@
 # Otus DevOps project
 
-За основу взят Hipster Shop: Cloud-Native Microservices Demo Application от Google
-Изменен сервис frontend:
-на порту 9090 сервис отдает метрики: latency bucket, количество кодов состояния HTTP (200, 302, 404, 500), запрос по типу (GET, POST)
-Удалено создание LoadBalancer при деплое. Вместо него добавлено создание nginx ingress. С адресами production, staging, review.
+За основу взят Hipster Shop: Cloud-Native Microservices Demo Application от Google  
+Изменен сервис frontend:  
+на порту 9090 сервис отдает метрики: latency bucket, количество кодов состояния HTTP (200, 302, 404, 500), запрос по типу (GET, POST)  
+Удалено создание LoadBalancer при деплое. Вместо него добавлено создание nginx ingress. С адресами production, staging, review.  
 
-frontend/chart/templates/ingress.yaml
-```
+frontend/chart/templates/ingress.yamlhttp://nnmclub.to/forum/login.php
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -53,7 +52,7 @@ Namespace для разделения служб: logging, monitoring, nginx-ing
 <https://gitlab.com/andrewmbr/cartservice>  
 <https://gitlab.com/andrewmbr/adservice>  
 
-1. Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
+### 1. Устанавливаем, если нет локально, gcloud, gsutil, terraform, helm v3, etc
 
 2. git pre-hooks
 
@@ -65,7 +64,6 @@ repos:
   - id: end-of-file-fixer
   - id: trailing-whitespace
   - id: check-added-large-files
-#  - id: check-yaml
 
 - repo: https://github.com/jumanjihouse/pre-commit-hooks
   rev: 2.0.0
