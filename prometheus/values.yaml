@@ -1116,7 +1116,7 @@ alertmanagerFiles:
   alertmanager.yml:
     #global: {}
     global:
-      slack_api_url: 'xxx_https://hooks.slack.com/services/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'
+      slack_api_url: 'https://hooks.slack.com/services/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'
       # slack_api_url: ''
 
     receivers:

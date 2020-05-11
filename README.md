@@ -5,7 +5,7 @@
 на порту 9090 сервис отдает метрики: latency bucket, количество кодов состояния HTTP (200, 302, 404, 500), запрос по типу (GET, POST)  
 Удалено создание LoadBalancer при деплое. Вместо него добавлено создание nginx ingress. С адресами production, staging, review.  
 
-frontend/chart/templates/ingress.yamlhttp://nnmclub.to/forum/login.php
+frontend/chart/templates/ingress.yaml
 
 ```
 apiVersion: extensions/v1beta1
