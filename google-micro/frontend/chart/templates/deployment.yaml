@@ -16,8 +16,12 @@ spec:
       containers:
         - name: server
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          imagePullPolicy: "Always"
           ports:
           - containerPort: 8080
+            name: frontend
+          - containerPort: 9090
+            name: metrics
           readinessProbe:
             initialDelaySeconds: 10
             httpGet:

@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: {{ template "frontend.fullname" . }}
+  name: {{ template "frontend.fullname" . }}
+  annotations:
+spec:
+  rules:
+    - host: {{ .Release.Namespace }}.homembr.ru
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: frontend
+              servicePort: {{ .Values.service.externalPort }}

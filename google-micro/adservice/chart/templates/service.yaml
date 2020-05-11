@@ -11,3 +11,6 @@ spec:
   - name: grpc
     port: {{ .Values.service.externalPort }}
     targetPort: {{ .Values.service.internalPort }}
+  - name: metrics
+    port: 9090
+    targetPort: 9090

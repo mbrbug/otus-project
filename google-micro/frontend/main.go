@@ -27,6 +27,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"go.opencensus.io/exporter/jaeger"
+	"go.opencensus.io/exporter/prometheus"
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/plugin/ochttp/propagation/b3"
@@ -80,33 +81,19 @@ type frontendServer struct {
 	adSvcConn *grpc.ClientConn
 }
 
+var stackdriverExporter view.Exporter
+
 func main() {
 	ctx := context.Background()
 	log := logrus.New()
 	log.Level = logrus.DebugLevel
-	log.Formatter = &logrus.JSONFormatter{
-		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime:  "timestamp",
-			logrus.FieldKeyLevel: "severity",
-			logrus.FieldKeyMsg:   "message",
-		},
-		TimestampFormat: time.RFC3339Nano,
-	}
-	log.Out = os.Stdout
+	log.Formatter = &logrus.TextFormatter{}
 
-	if os.Getenv("DISABLE_TRACING") == "" {
-		log.Info("Tracing enabled.")
-		go initTracing(log)
-	} else {
-		log.Info("Tracing disabled.")
-	}
-
-	if os.Getenv("DISABLE_PROFILER") == "" {
-		log.Info("Profiling enabled.")
-		go initProfiling(log, "frontend", "1.0.0")
-	} else {
-		log.Info("Profiling disabled.")
-	}
+	go initProfiling(log, "frontend", "1.0.0")
+	go func (log logrus.FieldLogger) {
+		initTracing(log)
+		initStats(log)
+	}(log)
 
 	srvPort := port
 	if os.Getenv("PORT") != "" {
@@ -122,13 +109,13 @@ func main() {
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_SERVICE_ADDR")
 	mustMapEnv(&svc.adSvcAddr, "AD_SERVICE_ADDR")
 
-	mustConnGRPC(ctx, &svc.currencySvcConn, svc.currencySvcAddr)
-	mustConnGRPC(ctx, &svc.productCatalogSvcConn, svc.productCatalogSvcAddr)
-	mustConnGRPC(ctx, &svc.cartSvcConn, svc.cartSvcAddr)
-	mustConnGRPC(ctx, &svc.recommendationSvcConn, svc.recommendationSvcAddr)
-	mustConnGRPC(ctx, &svc.shippingSvcConn, svc.shippingSvcAddr)
-	mustConnGRPC(ctx, &svc.checkoutSvcConn, svc.checkoutSvcAddr)
-	mustConnGRPC(ctx, &svc.adSvcConn, svc.adSvcAddr)
+	svc.currencySvcConn = mustConnGRPC(ctx, svc.currencySvcAddr)
+	svc.productCatalogSvcConn = mustConnGRPC(ctx, svc.productCatalogSvcAddr)
+	svc.cartSvcConn = mustConnGRPC(ctx, svc.cartSvcAddr)
+	svc.recommendationSvcConn = mustConnGRPC(ctx, svc.recommendationSvcAddr)
+	svc.shippingSvcConn = mustConnGRPC(ctx, svc.shippingSvcAddr)
+	svc.checkoutSvcConn = mustConnGRPC(ctx, svc.checkoutSvcAddr)
+	svc.adSvcConn = mustConnGRPC(ctx, svc.adSvcAddr)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", svc.homeHandler).Methods(http.MethodGet, http.MethodHead)
@@ -156,16 +143,10 @@ func main() {
 
 func initJaegerTracing(log logrus.FieldLogger) {
 
-	svcAddr := os.Getenv("JAEGER_SERVICE_ADDR")
-	if svcAddr == "" {
-		log.Info("jaeger initialization disabled.")
-		return
-	}
-
 	// Register the Jaeger exporter to be able to retrieve
 	// the collected spans.
 	exporter, err := jaeger.NewExporter(jaeger.Options{
-		Endpoint: fmt.Sprintf("http://%s", svcAddr),
+		Endpoint: "http://jaeger:14268",
 		Process: jaeger.Process{
 			ServiceName: "frontend",
 		},
@@ -174,48 +155,57 @@ func initJaegerTracing(log logrus.FieldLogger) {
 		log.Fatal(err)
 	}
 	trace.RegisterExporter(exporter)
-	log.Info("jaeger initialization completed.")
 }
 
-func initStats(log logrus.FieldLogger, exporter *stackdriver.Exporter) {
-	view.SetReportingPeriod(60 * time.Second)
+func initPrometheusStatsExporter(log logrus.FieldLogger) *prometheus.Exporter {
+	exporter, err := prometheus.NewExporter(prometheus.Options{})
+
+	if err != nil {
+		log.Fatal("error registering prometheus exporter")
+		return nil
+	}
+
 	view.RegisterExporter(exporter)
-	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
-		log.Warn("Error registering http default server views")
-	} else {
-		log.Info("Registered http default server views")
-	}
-	if err := view.Register(ocgrpc.DefaultClientViews...); err != nil {
-		log.Warn("Error registering grpc default client views")
-	} else {
-		log.Info("Registered grpc default client views")
-	}
+	return exporter
+}
+func startPrometheusExporter(log logrus.FieldLogger, exporter *prometheus.Exporter) {
+	addr := ":9090"
+	log.Infof("starting prometheus server at %s", addr)
+	http.Handle("/metrics", exporter)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
-func initStackdriverTracing(log logrus.FieldLogger) {
-	// TODO(ahmetb) this method is duplicated in other microservices using Go
-	// since they are not sharing packages.
-	for i := 1; i <= 3; i++ {
-		log = log.WithField("retry", i)
-		exporter, err := stackdriver.NewExporter(stackdriver.Options{})
+func initStackDriverStatsExporter(log logrus.FieldLogger) {
+	// Reuse stactdriver exporter for stats if one is already created for tracing.
+	if stackdriverExporter == nil {
+		var err error
+		stackdriverExporter, err = stackdriver.NewExporter(stackdriver.Options{})
 		if err != nil {
-			// log.Warnf is used since there are multiple backends (stackdriver & jaeger)
-			// to store the traces. In production setup most likely you would use only one backend.
-			// In that case you should use log.Fatalf.
-			log.Warnf("failed to initialize Stackdriver exporter: %+v", err)
-		} else {
-			trace.RegisterExporter(exporter)
-			log.Info("registered Stackdriver tracing")
-
-			// Register the views to collect server stats.
-			initStats(log, exporter)
+			// log.Warn is used since there are multiple backends (stackdriver & prometheus)
+			// to store the metrics. In production setup most likely you would use only one backend.
+			// In that case you should use log.Fatal.
+			log.Warn("error creating stackdriver exporter");
 			return
 		}
-		d := time.Second * 20 * time.Duration(i)
-		log.Debugf("sleeping %v to retry initializing Stackdriver exporter", d)
-		time.Sleep(d)
 	}
-	log.Warn("could not initialize Stackdriver exporter after retrying, giving up")
+	view.RegisterExporter(stackdriverExporter)
+}
+
+func initStats(log logrus.FieldLogger) {
+	log.Infof("init stats")
+
+	initStackDriverStatsExporter(log)
+
+	// Start prometheus exporter as well
+	exporter := initPrometheusStatsExporter(log)
+	go startPrometheusExporter(log, exporter)
+
+	if err := view.Register(ochttp.DefaultServerViews...); err != nil {
+		log.Fatal("error registering default http server views")
+	}
+	if err := view.Register(ocgrpc.DefaultClientViews...); err != nil {
+		log.Fatal("error registering default grpc client views")
+	}
 }
 
 func initTracing(log logrus.FieldLogger) {
@@ -226,8 +216,29 @@ func initTracing(log logrus.FieldLogger) {
 	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 
 	initJaegerTracing(log)
-	initStackdriverTracing(log)
 
+	// TODO(ahmetb) this method is duplicated in other microservices using Go
+	// since they are not sharing packages.
+	for i := 1; i <= 3; i++ {
+		log = log.WithField("retry", i)
+		exporter, err := stackdriver.NewExporter(stackdriver.Options{})
+		if err != nil {
+			// log.Warnf is used since there are multiple backends (stackdriver & jaeger)
+			// to store the traces. In production setup most likely you would use only one backend.
+			// In that case you should use log.Fatalf.
+			log.Warnf("failed to initialize stackdriver exporter: %+v", err)
+		} else {
+			trace.RegisterExporter(exporter)
+			log.Info("registered stackdriver tracing")
+
+			stackdriverExporter = exporter
+			return
+		}
+		d := time.Second * 20 * time.Duration(i)
+		log.Debugf("sleeping %v to retry initializing stackdriver exporter", d)
+		time.Sleep(d)
+	}
+	log.Warn("could not initialize stackdriver exporter after retrying, giving up")
 }
 
 func initProfiling(log logrus.FieldLogger, service, version string) {
@@ -243,14 +254,14 @@ func initProfiling(log logrus.FieldLogger, service, version string) {
 		}); err != nil {
 			log.Warnf("warn: failed to start profiler: %+v", err)
 		} else {
-			log.Info("started Stackdriver profiler")
+			log.Info("started stackdriver profiler")
 			return
 		}
 		d := time.Second * 10 * time.Duration(i)
-		log.Debugf("sleeping %v to retry initializing Stackdriver profiler", d)
+		log.Debugf("sleeping %v to retry initializing stackdriver profiler", d)
 		time.Sleep(d)
 	}
-	log.Warn("warning: could not initialize Stackdriver profiler after retrying, giving up")
+	log.Warn("warning: could not initialize stackdriver profiler after retrying, giving up")
 }
 
 func mustMapEnv(target *string, envKey string) {
@@ -261,13 +272,12 @@ func mustMapEnv(target *string, envKey string) {
 	*target = v
 }
 
-func mustConnGRPC(ctx context.Context, conn **grpc.ClientConn, addr string) {
-	var err error
-	*conn, err = grpc.DialContext(ctx, addr,
+func mustConnGRPC(ctx context.Context, addr string) *grpc.ClientConn {
+	conn, err := grpc.DialContext(ctx, addr,
 		grpc.WithInsecure(),
-		grpc.WithTimeout(time.Second*3),
 		grpc.WithStatsHandler(&ocgrpc.ClientHandler{}))
 	if err != nil {
 		panic(errors.Wrapf(err, "grpc: failed to connect %s", addr))
 	}
+	return conn
 }

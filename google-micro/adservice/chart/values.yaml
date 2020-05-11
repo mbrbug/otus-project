@@ -1,7 +1,7 @@
 ---
 image:
   repository: andrewmbr/adservice
-  tag: master
+  tag: latest
 
 service:
   internalPort: 9555

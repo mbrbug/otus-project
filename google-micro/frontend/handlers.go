@@ -28,8 +28,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/frontend/genproto"
-	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/money"
+	pb "github.com/census-ecosystem/opencensus-microservices-demo/src/frontend/genproto"
+	"github.com/census-ecosystem/opencensus-microservices-demo/src/frontend/money"
 )
 
 var (
@@ -80,7 +80,7 @@ func (fe *frontendServer) homeHandler(w http.ResponseWriter, r *http.Request) {
 		"products":      ps,
 		"cart_size":     len(cart),
 		"banner_color":  os.Getenv("BANNER_COLOR"), // illustrates canary deployments
-		"ad":            fe.chooseAd(r.Context(), []string{}, log),
+		"ad":            fe.chooseAd(r.Context(), log),
 	}); err != nil {
 		log.Error(err)
 	}
@@ -133,7 +133,7 @@ func (fe *frontendServer) productHandler(w http.ResponseWriter, r *http.Request)
 	if err := templates.ExecuteTemplate(w, "product", map[string]interface{}{
 		"session_id":      sessionID(r),
 		"request_id":      r.Context().Value(ctxKeyRequestID{}),
-		"ad":              fe.chooseAd(r.Context(), p.Categories, log),
+		"ad":              fe.chooseAd(r.Context(), log),
 		"user_currency":   currentCurrency(r),
 		"currencies":      currencies,
 		"product":         product,
@@ -346,8 +346,8 @@ func (fe *frontendServer) setCurrencyHandler(w http.ResponseWriter, r *http.Requ
 
 // chooseAd queries for advertisements available and randomly chooses one, if
 // available. It ignores the error retrieving the ad since it is not critical.
-func (fe *frontendServer) chooseAd(ctx context.Context, ctxKeys []string, log logrus.FieldLogger) *pb.Ad {
-	ads, err := fe.getAd(ctx, ctxKeys)
+func (fe *frontendServer) chooseAd(ctx context.Context, log logrus.FieldLogger) *pb.Ad {
+	ads, err := fe.getAd(ctx)
 	if err != nil {
 		log.WithField("error", err).Warn("failed to retrieve ads")
 		return nil

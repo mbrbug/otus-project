@@ -1,9 +1,9 @@
-FROM golang:1.12-alpine as builder
+FROM golang:1.10-alpine as builder
 RUN apk add --no-cache ca-certificates git && \
       wget -qO/go/bin/dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && \
       chmod +x /go/bin/dep
 
-ENV PROJECT github.com/GoogleCloudPlatform/microservices-demo/src/frontend
+ENV PROJECT github.com/census-ecosystem/opencensus-microservices-demo/src/frontend
 WORKDIR /go/src/$PROJECT
 
 # restore dependencies
@@ -19,5 +19,5 @@ WORKDIR /frontend
 COPY --from=builder /go/bin/frontend /frontend/server
 COPY ./templates ./templates
 COPY ./static ./static
-EXPOSE 8080
+EXPOSE 8080 9090
 ENTRYPOINT ["/frontend/server"]

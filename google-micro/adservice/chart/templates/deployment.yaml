@@ -14,9 +14,13 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image:  {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 9555
+          name: adservice
+        - containerPort: 9090
+          name: metrics
         env:
         - name: PORT
           value: "9555"

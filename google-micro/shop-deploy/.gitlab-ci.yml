@@ -10,7 +10,7 @@ variables:
 #    GKE_SERVICE_ACCOUNT: base64-encoded-json-service-account-file-from-gke
     GKE_CLUSTER_NAME: my-gke-cluster
     GKE_ZONE: us-central1-c
-    GKE_PROJECT: docker-270618
+    GKE_PROJECT: notional-portal-276509
 #    URL_REVIEW: ${CI_COMMIT_REF_SLUG}.your.domain.com
 #    URL_PRODUCTION: your.domain.com
 
@@ -28,7 +28,7 @@ staging:
     KUBE_NAMESPACE: staging
   environment:
     name: staging
-    url: http://staging
+    url: http://staging.homembr.ru
   script:
      - mkdir -p /etc/deploy
      - echo ${GKE_SERVICE_ACCOUNT} | base64 -d > /etc/deploy/sa.json
@@ -45,7 +45,8 @@ staging:
      - export
      - echo name $name
      - kubectl describe namespace "$KUBE_NAMESPACE" || kubectl create namespace "$KUBE_NAMESPACE"
-     - git clone https://gitlab.homembr.ru/$CI_PROJECT_NAMESPACE/shop-deploy.git
+#     - git clone https://gitlab.homembr.ru/$CI_PROJECT_NAMESPACE/shop-deploy.git
+     - git clone "$CI_REPOSITORY_URL"
      - >
       helm upgrade \
         --install \
@@ -65,7 +66,7 @@ production:
     KUBE_NAMESPACE: production
   environment:
     name: production
-    url: http://production
+    url: http://production.homembr.ru
   script:
      - mkdir -p /etc/deploy
      - echo ${GKE_SERVICE_ACCOUNT} | base64 -d > /etc/deploy/sa.json
@@ -80,7 +81,8 @@ production:
         name="$name-$track"
       fi
      - kubectl describe namespace "$KUBE_NAMESPACE" || kubectl create namespace "$KUBE_NAMESPACE"
-     - git clone https://gitlab.homembr.ru/$CI_PROJECT_NAMESPACE/shop-deploy.git
+#     - git clone https://gitlab.homembr.ru/$CI_PROJECT_NAMESPACE/shop-deploy.git
+     - git clone "$CI_REPOSITORY_URL"
      - >
       helm upgrade \
         --install \

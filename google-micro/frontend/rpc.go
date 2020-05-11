@@ -18,7 +18,7 @@ import (
 	"context"
 	"time"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/frontend/genproto"
+	pb "github.com/census-ecosystem/opencensus-microservices-demo/src/frontend/genproto"
 
 	"github.com/pkg/errors"
 )
@@ -116,12 +116,12 @@ func (fe *frontendServer) getRecommendations(ctx context.Context, userID string,
 	return out, err
 }
 
-func (fe *frontendServer) getAd(ctx context.Context, ctxKeys []string) ([]*pb.Ad, error) {
+func (fe *frontendServer) getAd(ctx context.Context) ([]*pb.Ad, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*100)
 	defer cancel()
 
 	resp, err := pb.NewAdServiceClient(fe.adSvcConn).GetAds(ctx, &pb.AdRequest{
-		ContextKeys: ctxKeys,
+		ContextKeys: nil,
 	})
 	return resp.GetAds(), errors.Wrap(err, "failed to get ads")
 }
