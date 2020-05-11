@@ -368,10 +368,14 @@ datasources:
 
 variable: namespace /(production|staging|review)/
 
-latency(95 percentile): `histogram_quantile(0.95, sum(rate(opencensus_io_http_server_latency_bucket{kubernetes_namespace=~"$namespace"}[5m])) by (le))`  
-request count by method: `rate(opencensus_io_http_server_request_count_by_method{app="frontend",kubernetes_namespace=~"$namespace"}[5m])`  
-response count by status 404 or 500: `rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",kubernetes_namespace=~"$namespace",http_status=~"^[45].*"}[5m])`  
-response count by status 200 or 302: `rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",kubernetes_namespace=~"$namespace",http_status=~"200|302"}[5m])`  
+latency(95 percentile):  
+`histogram_quantile(0.95, sum(rate(opencensus_io_http_server_latency_bucket{kubernetes_namespace=~"$namespace"}[5m])) by (le))`  
+request count by method:  
+`rate(opencensus_io_http_server_request_count_by_method{app="frontend",kubernetes_namespace=~"$namespace"}[5m])`  
+response count by status 404 or 500:  
+`rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",kubernetes_namespace=~"$namespace",http_status=~"^[45].*"}[5m])`  
+response count by status 200 or 302:  
+`rate(opencensus_io_http_server_response_count_by_status_code{app="frontend",kubernetes_namespace=~"$namespace",http_status=~"200|302"}[5m])`  
 etc...
 
 Добавлены dashboards в папку dashboards локального chart 
